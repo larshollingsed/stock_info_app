@@ -7,9 +7,11 @@ import 'antd/dist/antd.css'
 import { AutoComplete, Alert } from 'antd';
 import Chart from 'react-google-charts';
 
-const base = 'https://cloud.iexapis.com/stable/stock/';
+const base = 'https://cloud.iexapis.com/stable/stock';
 const token = '/chart/1m?token=pk_0b61d9bd2072480cb885c51c1a47f59d';
-const generateUrl = (code) => `${base}${code}${token}`;
+const generateUrl = (code) => `${base}/${code}${token}`;
+
+// const tooltipStyle = '"width: 150px; padding: 10px"';
 
 const App = () => {
   const [search, setSearch] = useState('');
