@@ -4,8 +4,11 @@ import axios from 'axios';
 import companyList from '../../modules/comanyList.js';
 import createTooltip from '../../modules/createTooltip.js';
 import { AutoComplete, Button } from 'antd';
+import './styles.scss';
 
 const base = 'https://cloud.iexapis.com/stable/stock';
+// obviously, I would never put a key inside of a github repo but this
+// is just for demo purposes
 const token = '/chart/1m?token=pk_0b61d9bd2072480cb885c51c1a47f59d';
 const generateUrl = (code) => `${base}/${code}${token}`;
 
@@ -61,7 +64,8 @@ const Search = ({
       setStockName(name);
     }
     catch(err) {
-      setError(`Invalid Symbol - ${search.toUpperCase()}`);
+      const message = err.response ? `${err.response.data} - ${search.toUpperCase()}` : 'An error has occurred';
+      setError(message);
     }
     finally {
       setLoading(false);
@@ -69,8 +73,9 @@ const Search = ({
   }
 
   return (
-    <div>
+    <div className="searchContainer">
       <AutoComplete
+        className="searchInput"
         onSearch={onSearch}
         value={search}
         style={{ width: '300px' }}
@@ -86,6 +91,7 @@ const Search = ({
       <Button
         onClick={checkStock}
         loading={loading}
+        className="searchButton"
       >
         Check Stock
       </Button>

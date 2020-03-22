@@ -4,6 +4,7 @@ import Chart from 'react-google-charts';
 import { Alert } from 'antd';
 import Search from './components/Search';
 import chartOptions from './modules/chartOptions.js';
+import './App.scss';
 
 const App = () => {
   const [history, setHistory] = useState([]);
@@ -17,7 +18,7 @@ const App = () => {
         setStockName={setStockName}
         setError={setError}
       />
-      {error && <Alert message={error} type="error" />}
+      {error && <Alert message={error} type="error" className="error" />}
       {!!history.length && <Chart
         width="100%"
         height={350}
