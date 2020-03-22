@@ -4,14 +4,13 @@ import companyList from './modules/comanyList.js';
 import createTooltip from './modules/createTooltip.js';
 import './App.css';
 import 'antd/dist/antd.css'
-import { AutoComplete, Alert } from 'antd';
+import { Alert } from 'antd';
+import Search from './components/Search';
 import Chart from 'react-google-charts';
 
 const base = 'https://cloud.iexapis.com/stable/stock';
 const token = '/chart/1m?token=pk_0b61d9bd2072480cb885c51c1a47f59d';
 const generateUrl = (code) => `${base}/${code}${token}`;
-
-// const tooltipStyle = '"width: 150px; padding: 10px"';
 
 const App = () => {
   const [search, setSearch] = useState('');
@@ -53,29 +52,21 @@ const App = () => {
     }
   }
 
-  const parseData = (stocks) => {
-
-    return stocks.map((stock) => (
+  const parseData = (stocks) => (
+    stocks.map((stock) => (
       [stock.date, stock.low, stock.close, stock.open, stock.high, createTooltip(stock)]
-    ));
-  }
+    ))
+  );
 
   return (
     <div className='App container'>
-      <AutoComplete
+      <Search
+        search={search}
         onSearch={onSearch}
-        value={search}
-        style={{ width: '300px' }}
         onSelect={onSelect}
-        placeholder="Search by stock symbol or company name"
-      >
-        {options.map(option => (
-          <AutoComplete.Option key={option.lowerSymbol} value={option.lowerSymbol}>
-            {`${option.symbol} - ${option.name}`}
-          </AutoComplete.Option>
-        ))}
-      </AutoComplete>
-      <button onClick={checkStock}>Check Stock</button>
+        options={options}
+        checkStock={checkStock}
+      />
       {error && <Alert message="This stock symbol does not exist" type="error" />}
       {!!history.length && <Chart
         width={'100%'}
