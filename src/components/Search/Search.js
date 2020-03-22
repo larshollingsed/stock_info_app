@@ -1,17 +1,77 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { AutoComplete } from 'antd';
+import axios from 'axios';
+import companyList from '../../modules/comanyList.js';
+import createTooltip from '../../modules/createTooltip.js';
+import { AutoComplete, Button } from 'antd';
 
-const propTypes = {};
+const base = 'https://cloud.iexapis.com/stable/stock';
+const token = '/chart/1m?token=pk_0b61d9bd2072480cb885c51c1a47f59d';
+const generateUrl = (code) => `${base}/${code}${token}`;
+
+const parseData = (stocks) => (
+  stocks.map((stock) => (
+    [stock.date, stock.low, stock.close, stock.open, stock.high, createTooltip(stock)]
+  ))
+);
+
+const propTypes = {
+//   search: PropTypes.string,
+//   setSearch,
+//   onSearch,
+//   onSelect,
+//   setHistory,
+//   setStockName,
+//   setError,
+};
 const defaultProps = {};
 
 const Search = ({
-  search,
-  onSearch,
-  onSelect,
-  options,
-  checkStock,
+  setHistory,
+  setStockName,
+  setError,
 }) => {
+  const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState([]);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    let matches = [];
+    if (search.length) {
+      matches = companyList.filter(
+        company => company.lowerName.includes(search) ||
+        company.lowerSymbol.includes(search)
+      );
+    }
+
+    setOptions(matches);
+  }, [search])
+
+  const onSearch = (value) => {
+    const searchInput = value.toLowerCase();
+    setSearch(searchInput);
+  };
+
+  const onSelect = value => setSearch(value);
+
+  const checkStock = async () => {
+    setError(undefined);
+    setLoading(true);
+    setHistory([]);
+    try {
+      const resp = await axios.get(generateUrl(search));
+      setHistory(parseData(resp.data));
+      const name = companyList.find(company => company.lowerSymbol === search).name;
+      setStockName(name);
+    }
+    catch(err) {
+      setError(`Invalid Symbol - ${search.toUpperCase()}`);
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
       <AutoComplete
@@ -27,7 +87,12 @@ const Search = ({
           </AutoComplete.Option>
         ))}
       </AutoComplete>
-      <button onClick={checkStock}>Check Stock</button>
+      <Button
+        onClick={checkStock}
+        loading={loading}
+      >
+        Check Stock
+      </Button>
     </div>
   )
 };
