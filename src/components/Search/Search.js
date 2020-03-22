@@ -16,13 +16,9 @@ const parseData = (stocks) => (
 );
 
 const propTypes = {
-//   search: PropTypes.string,
-//   setSearch,
-//   onSearch,
-//   onSelect,
-//   setHistory,
-//   setStockName,
-//   setError,
+  setHistory: PropTypes.func.isRequired,
+  setStockName: PropTypes.func.isRequired,
+  setError: PropTypes.func.isRequired,
 };
 const defaultProps = {};
 

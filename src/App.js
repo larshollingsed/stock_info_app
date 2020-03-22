@@ -21,7 +21,7 @@ const App = () => {
       {!!history.length && <Chart
         width="100%"
         height={350}
-        chartType='CandlestickChart'
+        chartType="CandlestickChart"
         loader={<div>Loading Chart</div>}
         data={[
           [
