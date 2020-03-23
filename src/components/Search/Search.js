@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import companyList from '../../modules/comanyList.js';
@@ -25,48 +25,14 @@ const propTypes = {
 };
 const defaultProps = {};
 
-const initialState = {
-  options: [],
-  loading: false,
-  search: '',
-};
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case 'setOptions':
-      return {
-        ...state,
-        options: action.options,
-      }
-    case 'setSearch':
-      return {
-        ...state,
-        search: action.search,
-      }
-    case 'beforeCheckStock':
-      return {
-        ...state,
-        loading: true,
-        history: [],
-        error: undefined,
-      }
-    case 'setNotLoading':
-    return {
-      ...state,
-      loading: false,
-    }
-    default:
-      return initialState;
-    }
-  };
-
 const Search = ({
   setHistory,
   setStockName,
   setError,
 }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const { loading, search, options } = state;
+  const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     let matches = [];
@@ -77,23 +43,24 @@ const Search = ({
       );
     }
 
-    dispatch({ type: 'setOptions', options: matches });
+    setOptions(matches);
   }, [search])
 
   const onSearch = (value) => {
-    dispatch({ type: 'setSearch', search: value.toLowerCase() })
+    const searchInput = value.toLowerCase();
+    setSearch(searchInput);
   };
 
-  const onSelect = value => dispatch({ type: 'setSearch', search: value });
+  const onSelect = value => setSearch(value);
 
   const checkStock = async () => {
-    dispatch({ type: 'beforeCheckStock' });
-
+    setError(undefined);
+    setLoading(true);
+    setHistory([]);
     try {
       const resp = await axios.get(generateUrl(search));
-      const name = companyList.find(company => company.lowerSymbol === search).name;
-
       setHistory(parseData(resp.data));
+      const name = companyList.find(company => company.lowerSymbol === search).name;
       setStockName(name);
     }
     catch(err) {
@@ -101,7 +68,7 @@ const Search = ({
       setError(message);
     }
     finally {
-      dispatch({ type: 'setNotLoading' });
+      setLoading(false);
     }
   }
 
