@@ -4,7 +4,7 @@ import axios from 'axios';
 import companyList from '../../modules/comanyList.js';
 import createTooltip from '../../modules/createTooltip.js';
 import { AutoComplete, Button } from 'antd';
-import { DotChartOutlined } from '@ant-design/icons';
+import { DotChartOutlined, DeleteOutlined } from '@ant-design/icons';
 import './styles.scss';
 
 const base = 'https://cloud.iexapis.com/stable/stock';
@@ -45,7 +45,7 @@ const Search = ({
     }
 
     setOptions(matches);
-  }, [search])
+  }, [search]);
 
   const onSearch = (value) => {
     const searchInput = value.toLowerCase();
@@ -71,12 +71,18 @@ const Search = ({
     finally {
       setLoading(false);
     }
-  }
+  };
 
   const onKeyDown = ({ key }) => {
     if (key === 'Enter') {
       checkStock();
     }
+  };
+
+  const clear = () => {
+    setHistory([]);
+    setError(undefined);
+    setSearch('');
   };
 
   return (
@@ -85,7 +91,6 @@ const Search = ({
         className="searchInput"
         onSearch={onSearch}
         value={search}
-        style={{ width: '300px' }}
         onSelect={onSelect}
         placeholder="Search by stock symbol or company name"
         onKeyDown={onKeyDown}
@@ -96,14 +101,22 @@ const Search = ({
           </AutoComplete.Option>
         ))}
       </AutoComplete>
-      <Button
-        onClick={checkStock}
-        loading={loading}
-        className="searchButton"
-        icon={<DotChartOutlined />}
-      >
-        Check Stock
-      </Button>
+      <div className="buttons">
+        <Button
+          onClick={checkStock}
+          loading={loading}
+          icon={<DotChartOutlined />}
+          >
+          Check Stock
+        </Button>
+        <Button
+          onClick={clear}
+          icon={<DeleteOutlined />}
+          className="clearButton"
+        >
+          Clear
+        </Button>
+      </div>
     </div>
   )
 };

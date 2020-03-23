@@ -1,10 +1,15 @@
 .searchContainer {
+  width: 300px;
+
   .searchInput {
     display: block;
   }
 
-  .searchButton {
+  .buttons {
     margin-top: 10px;
-    display: block;
+
+    .clearButton {
+      float: right;
+    }
   }
 }
