@@ -4,6 +4,7 @@ import axios from 'axios';
 import companyList from '../../modules/comanyList.js';
 import createTooltip from '../../modules/createTooltip.js';
 import { AutoComplete, Button } from 'antd';
+import { DotChartOutlined } from '@ant-design/icons';
 import './styles.scss';
 
 const base = 'https://cloud.iexapis.com/stable/stock';
@@ -72,6 +73,12 @@ const Search = ({
     }
   }
 
+  const onKeyDown = ({ key }) => {
+    if (key === 'Enter') {
+      checkStock();
+    }
+  };
+
   return (
     <div className="searchContainer">
       <AutoComplete
@@ -81,6 +88,7 @@ const Search = ({
         style={{ width: '300px' }}
         onSelect={onSelect}
         placeholder="Search by stock symbol or company name"
+        onKeyDown={onKeyDown}
       >
         {options.map(option => (
           <AutoComplete.Option key={option.lowerSymbol} value={option.lowerSymbol}>
@@ -92,6 +100,7 @@ const Search = ({
         onClick={checkStock}
         loading={loading}
         className="searchButton"
+        icon={<DotChartOutlined />}
       >
         Check Stock
       </Button>
